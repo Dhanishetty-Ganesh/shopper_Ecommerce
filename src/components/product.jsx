@@ -1,88 +1,69 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
-import React from 'react'
-import Moreproduct from './moreproduct';
-import pr5 from '../assets/images/products/f5.jpg'
-import pr6 from '../assets/images/products/f6.jpg'
-import pr7 from '../assets/images/products/f7.jpg'
-import pr8 from '../assets/images/products/f8.jpg'
-import Newsletter from './newsletter';
+import React, { useContext } from 'react';
+import { ShopContext } from './shopcontext';
+import ReactStars from "react-rating-stars-component";
+import { Link } from 'react-router-dom';
 
+/**
+ * Product component representing individual product information.
+ * @param {object} props - Props containing data for the product.
+ * @returns {JSX.Element} Product component.
+ */
+const Product = (props) => {
+    // Destructuring props
+    const { id, name, price, image, brand } = props.data;
+    
+    // Using useContext hook to access shared state and functions
+    const { addToCart, cartItems, viewProductDetails } = useContext(ShopContext);
 
-const product = (props) => {
-  return <>
-  <section className="product-wrapper p-5">
-    <div className="container-xxl">
-        <div className="row">
-            <div className="col-12 d-flex justify-content-center">
-                <div className="col-6 P-4">
-                    <div className='p-5 d-flex align-items-center justify-content-center'>
-                    <img src={props.image} alt="" className='img-fluid mb-2 w-50'/>
-                    </div>
-                    <div className="row small-img p-5">
-                        <div className="col-md-3">
-                        <img src={props.smallimage1} alt="" className='img-fluid small-img mb-2'/>
+    // Retrieving the amount of this product in the cart
+    const cartItemAmount = cartItems[id];
+    
+    return (
+        <>
+            <div className="col mb-5">
+                {/* Link to product details page */}
+                <Link key={id} className="card h-100 m-auto">
+                    <img src={image} className="card-img-top img-fluid" alt="..." />
+                    <div className="card-body">
+                        <p className="card-text mb-2">{brand}</p>
+                        <h5>{name} </h5>
+                        {/* Rating stars */}
+                        <ReactStars
+                            count={5}
+                            edit={false}
+                            value={4} // This should be dynamic based on product ratings
+                            size={24}
+                            activeColor="#EA9D5A"
+                        />
+                        <div className="mb-3">
+                            {/* Product prices */}
+                            <p className="price mb-2"><span className="red">{price} </span>&nbsp;  <strike>{price * 2}$</strike></p>
+                            {/* Link to product details page */}
+                            <Link to='/details' onClick={() => viewProductDetails(id)}>
+                                <p className="text-center"><button className='fs-4' id='clear-cart'>View Details</button></p>
+                            </Link>
                         </div>
-
-                        <div className="col-md-3">
-                        <img src={props.smallimage2} alt="" className='img-fluid small-img mb-2'/>
-                        </div>
-
-                        <div className="col-md-3">
-                        <img src={props.smallimage3} alt="" className='img-fluid small-img mb-2'/>
-                        </div>
-
-                        <div className="col-md-3">
-                        <img src={props.smallimage4} alt="" className='img-fluid small-img mb-2'/>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-6 d-flex  justify-content-center flex-column">
-                    <div className="product-details p-5">
-                    <div className='mb-4'>
-                        <h2>{props.title}</h2>
-                    </div>
-
-                    <div className='mb-4'>
-                        <p>${props.price}&nbsp; <strike className = 'text-danger'>200$</strike></p>
-                    </div>
-                    <div className='mb-5 row'>
-                        <div className='col-md-6'>
-                        <select name="select" id="optios">
-                            <option value="0">Select Size</option>
-                            <option value="1">Small</option>
-                            <option value="2">Medium</option>
-                            <option value="3">Large</option>
-                            <option value="4">Xl</option>
-                            <option value="5">XXL</option>
-                        </select>
-                        </div>
-                        <div className='col-md-6'>
-                        <input type="number"  />
+                        <div className="d-flex justify-content-center">
+                            {/* Add to cart button */}
+                            <button 
+                                onClick={() => {
+                                    addToCart(id);
+                                    event.target.classList.toggle("red");
+                                }}
+                                className="myButton"
+                            >
+                                Add To Cart
+                                {/* Show the amount of this product in the cart if it's greater than 0 */}
+                                {cartItemAmount > 0 && `(${cartItemAmount})`}
+                            </button>
                         </div>
                     </div>
-                    <div className='mb-4'>
-                        <button id='button-link'>Add to cart</button>
-                    </div>
-                    <div className='mb-4'>
-                        <p>{props.description}</p>
-                        <p>{props.description}</p>
-                        <p>{props.description}</p>
-                    </div>
-                    </div>
-                    
-                </div>
+                </Link>
             </div>
-        </div>
-    </div>
-  </section>
-
-  <Moreproduct 
-  image1={pr5} image2={pr6} image3={pr7} image4={pr8}
-  />
-
-  <Newsletter />
-  </>;
+        </>
+    );
 }
 
-export default product
+export default Product;

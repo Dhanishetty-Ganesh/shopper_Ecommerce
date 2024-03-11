@@ -1,17 +1,43 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable no-unused-vars */
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from './shopcontext';
-import { PRODUCTS, PRODUCTS1 } from './products';
 
 const ProductDetails = () => {
-  const { selectedProduct, closeProductDetails, addToCart, cartItems, removeToCart, updateCartItemCount } = useContext(ShopContext);
+  const { selectedProduct, addToCart, cartItems, removeToCart, updateCartItemCount } = useContext(ShopContext);
 
   // Set selectedProduct to 0
   const productId = selectedProduct || 0;
-  
-  const product = PRODUCTS.find((p) => p.id === productId) || PRODUCTS1.find((p) => p.id === productId);
-  
+
+  // State to hold the fetched product data
+  const [fetchedProduct, setFetchedProduct] = useState(null);
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://productsapi-production-4566.up.railway.app/products/");
+        const data = await response.json();
+        console.log(data);
+        // Assuming the fetched data is an array of products
+        // You may need to adjust this based on the actual structure of your data
+        if (Array.isArray(data)) {
+          // Find the product in the fetched data that matches the selected productId
+          const foundProduct = data.find(product => product.id === productId);
+          if (foundProduct) {
+            // Set the fetched product in state
+            setFetchedProduct(foundProduct);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+
+    fetchData();
+  }, [productId]);
+
+  // Use fetched product as the product
+  const product = fetchedProduct;
+
   if (!product) {
     return null;
   }
@@ -38,7 +64,6 @@ const ProductDetails = () => {
               <p className="card-text">{product.description}</p>
               <p className="card-text mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. <br /> Quibusdam tempore unde aperiam, consectetur harum a eum error, <br /> libero nemo quisquam ex assumenda corrupti rerum aut quod et sint facere reprehenderit?</p>
 
-
               <div className="d-flex align-items-center mb-3 col-6">
                 <button className="btn btn-outline-secondary me-2" onClick={() => addToCart(product.id)}>+</button>
                 <input className="form-control text-center" type="number" value={cartItems[product.id]} onChange={(e) => updateCartItemCount(Number(e.target.value), product.id)} />
@@ -46,55 +71,21 @@ const ProductDetails = () => {
               </div>
 
               <div className="d-flex justify-content-center">
-              <button
-                onClick={() => {
-                  addToCart(product.id);
-                  event.target.classList.toggle("red");
-                }}
-                id='button-link'
-               className="myButton"
-              >
-                Add To Cart
-                {cartItemAmount > 0 && ` (${cartItemAmount})`}
-              </button>
+                <button
+                  onClick={() => {
+                    addToCart(product.id);
+                    event.target.classList.toggle("red");
+                  }}
+                  id='button-link'
+                  className="myButton"
+                >
+                  Add To Cart
+                  {cartItemAmount > 0 && ` (${cartItemAmount})`}
+                </button>
               </div>
             </div>
           </div>
-          <div className="card">
-            <div className="d-flex justify-content-center flex-column align-items-center">
-            <h2 className="text-center mb-2">More products of the same</h2>
-            <p className="mb-2">We have more products, visit the shop to get amazing deals from us!!</p>
-            </div>
-            <div className="d-none d-md-block">
-              <div className="row mb-3">
-                <div className="col-6 col-md-4 col-lg-8 mx-auto">
-                  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
-                    {PRODUCTS.slice(3, 7).map((product) => (
-                      <div key={product.id} className="col">
-                        <div className="card h-100">
-                          <img src={product.image} className="card-img-top" alt="..." />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row mb-4">
-                <div className="col-6 col-md-4 col-lg-8 mx-auto">
-                  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
-                    {PRODUCTS1.slice(2, 6).map((product) => (
-                      <div key={product.id} className="col">
-                        <div className="card h-100">
-                          <img src={product.image} className="card-img-top" alt="..." />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Additional JSX for displaying more products */}
         </div>
       </div>
     </div>

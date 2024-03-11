@@ -2,15 +2,21 @@
 import React from 'react'
 import Productdetails from '../components/productdetails'
 
+/**
+ * Component for rendering product details page.
+ * @returns {JSX.Element} Product details component.
+ */
 const details = () => {
   return<>
-  <section className="product-details p-5">
-    <div className="conntainer-xxl">
+    {/* Product Details Section */}
+    <section className="product-details p-5">
+      <div className="conntainer-xxl">
         <div className="row">
-        <Productdetails />
+          {/* Render Productdetails component */}
+          <Productdetails />
         </div>
-    </div>
-  </section>
+      </div>
+    </section>
   </>
 }
 

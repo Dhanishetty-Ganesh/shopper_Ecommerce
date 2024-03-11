@@ -11,7 +11,6 @@ import Signup from './pages/signup'
 import Forgotpasword from './pages/forgotpasword'
 import Cart from './pages/cart'
 import Checkout from './pages/checkout'
-import Blog from './pages/blog'
 import './App.css'
 import ShopContext from './components/shopcontext'
 import Details from './pages/details'
@@ -38,7 +37,6 @@ function App() {
       <Route path='/' element={<Layout />}>
         <Route index element={<Home />} />
         <Route path='shop' element={<Shop />} />
-        <Route path='blog' element={<Blog />} />
         <Route path='about' element={<About />} />
         <Route path='contact' element={<Contact />} />
         <Route path='login' element={<Login />} />
